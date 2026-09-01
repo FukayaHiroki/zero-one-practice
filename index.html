@@ -38,14 +38,7 @@
 
   main {
     flex: 1 1 0;
-    max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(8px, 1.4vh, 16px);
-  }
-
-  aside {
-    flex: 0 0 clamp(190px, 19vw, 280px);
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     gap: clamp(8px, 1.4vh, 16px);
@@ -80,27 +73,33 @@
   .remaining.is-win .remaining-value { color: var(--accent); }
   .remaining.is-over .remaining-value { color: var(--muted); }
 
-  /* ---- スタッツ ---- */
+  /* ---- スタッツ（今のゲーム + 通算を横並び） ---- */
   .stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(8px, 1.4vw, 16px);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(6px, 1vw, 12px);
   }
 
-  .stat { padding: clamp(8px, 1.4vh, 16px) clamp(14px, 2vw, 24px); }
+  .stat { padding: clamp(8px, 1.4vh, 14px) clamp(10px, 1.4vw, 18px); }
+
+  .stat .label { font-size: clamp(10px, 1.1vw, 13px); letter-spacing: .08em; }
 
   .stat-value {
-    font-size: clamp(34px, 6.4vw, 64px);
+    font-size: clamp(24px, 3.4vw, 44px);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    line-height: 1.15;
+    line-height: 1.2;
   }
 
   .stat-value small {
-    font-size: .45em;
+    font-size: .5em;
     font-weight: 500;
     color: var(--muted);
   }
+
+  /* 通算側はひとまわり控えめにして、今のゲームと区別する */
+  .stat.is-total { background: #161b24; }
+  .stat.is-total .stat-value { font-size: clamp(20px, 2.6vw, 34px); }
 
   /* ---- 入力 ---- */
   input {
@@ -121,6 +120,9 @@
   input:focus { outline: none; border-color: var(--accent); }
   input:disabled { color: var(--dim); border-style: dashed; }
 
+  /* 上がりの投数を待っている状態 */
+  input.is-darts { border-color: var(--accent); background: #0e1712; }
+
   .message {
     min-height: 1.6em;
     margin-top: clamp(4px, .8vh, 10px);
@@ -133,30 +135,46 @@
   .message.is-error { color: var(--warn); }
   .message.is-win { color: var(--accent); font-weight: 700; }
 
-  /* ---- ラウンド履歴 ---- */
-  .history {
+  /* ---- 履歴（ラウンド / ゲームを横並び） ---- */
+  .histories {
     flex: 1;
     min-height: 0;
-    padding: clamp(6px, 1vh, 12px) clamp(6px, 1vw, 12px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(8px, 1.4vw, 16px);
+  }
+
+  .histories > .panel {
+    min-height: 0;
+    padding: clamp(8px, 1.2vh, 14px) clamp(6px, .8vw, 10px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .histories .label { padding: 0 clamp(8px, 1vw, 12px) clamp(4px, .8vh, 8px); }
+
+  .list {
+    flex: 1;
+    min-height: 0;
     display: grid;
     grid-template-rows: repeat(10, minmax(0, 1fr));
     gap: 2px;
   }
 
-  .row {
-    display: grid;
-    grid-template-columns: 3.2em 1fr 1fr;
+  .row, .game {
     align-items: center;
-    padding: 0 clamp(10px, 2vw, 20px);
-    font-size: clamp(16px, 2.6vw, 26px);
+    padding: 0 clamp(6px, .8vw, 10px);
+    border-radius: 6px;
+    font-size: clamp(13px, 1.5vw, 19px);
     font-variant-numeric: tabular-nums;
-    border-radius: 8px;
   }
 
-  .row .no { color: var(--muted); font-size: .62em; }
+  /* ラウンド履歴 */
+  .row { display: grid; grid-template-columns: 2.4em 1fr 1fr; }
+  .row .no { color: var(--muted); font-size: .66em; }
   .row .score { text-align: right; font-weight: 700; }
   .row .rest { text-align: right; color: var(--muted); }
-  .row .score small { font-size: .58em; margin-left: .4em; }
+  .row .score small { font-size: .58em; margin-left: .35em; }
 
   .row.is-empty,
   .row.is-empty .no,
@@ -165,10 +183,22 @@
   .row.is-bust { background: rgba(248, 113, 113, .1); }
   .row.is-bust .score { color: var(--danger); }
 
+  /* ゲーム履歴 */
+  .game { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 6px; }
+  .game .gno { color: var(--muted); font-size: .66em; }
+  .game .gavg { text-align: right; font-weight: 700; }
+  .game .gres { font-size: .66em; color: var(--muted); min-width: 3.4em; text-align: right; }
+
+  .game.is-win .gavg { color: var(--accent); }
+
+  .game.is-empty,
+  .game.is-empty .gno,
+  .game.is-empty .gres { color: var(--dim); }
+
   /* ---- 操作 ---- */
   .actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: clamp(8px, 1.4vw, 16px);
   }
 
@@ -178,86 +208,24 @@
     border-radius: 14px;
     color: var(--text);
     font-family: inherit;
-    font-size: clamp(13px, 1.8vw, 20px);
+    font-size: clamp(12px, 1.6vw, 18px);
     padding: clamp(10px, 1.8vh, 18px);
     cursor: pointer;
   }
 
   button:active { background: #232a36; }
 
-  /* ---- サイド: 通算スタッツ ---- */
-  .totals {
-    padding: clamp(10px, 1.6vh, 18px) clamp(12px, 1.4vw, 20px);
-    display: flex;
-    flex-direction: column;
-    gap: clamp(10px, 1.6vh, 18px);
+  /* ---- 狭い画面 ---- */
+  @media (max-width: 860px) {
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .histories { flex: none; }
+    .list { grid-template-rows: repeat(10, minmax(1.9em, auto)); }
   }
 
-  .total-value {
-    font-size: clamp(24px, 2.6vw, 38px);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.15;
-  }
-
-  .total-value small {
-    font-size: .5em;
-    font-weight: 500;
-    color: var(--muted);
-    margin-left: .3em;
-  }
-
-  /* ---- サイド: ゲーム履歴 ---- */
-  .games {
-    flex: 1;
-    min-height: 0;
-    padding: clamp(8px, 1.2vh, 14px) clamp(6px, .8vw, 10px);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .games .label { padding: 0 8px clamp(4px, .8vh, 8px); }
-
-  .game-list {
-    flex: 1;
-    min-height: 0;
-    display: grid;
-    grid-template-rows: repeat(10, minmax(0, 1fr));
-    gap: 2px;
-  }
-
-  .game {
-    display: grid;
-    grid-template-columns: 2.6em 1fr auto;
-    align-items: center;
-    gap: 6px;
-    padding: 0 8px;
-    border-radius: 8px;
-    font-size: clamp(14px, 1.5vw, 20px);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .game .gno { color: var(--muted); font-size: .66em; }
-  .game .gavg { text-align: right; font-weight: 700; }
-  .game .gres { font-size: .62em; color: var(--muted); min-width: 3.4em; text-align: right; }
-
-  .game.is-win .gavg { color: var(--accent); }
-
-  .game.is-empty,
-  .game.is-empty .gno,
-  .game.is-empty .gres { color: var(--dim); }
-
-  /* ---- 縦積み（タブレット・スマホ） ---- */
-  @media (max-width: 1099px) {
-    body { flex-direction: column; align-items: center; }
-    main, aside { width: 100%; max-width: 900px; flex: none; }
-    main { order: 1; }
-    aside.right { order: 2; }
-    aside.left { order: 3; }
-    .games { flex: none; }
-    .game-list { grid-template-rows: repeat(5, minmax(0, 1fr)); grid-auto-flow: column; grid-template-columns: 1fr 1fr; gap: 2px clamp(8px, 2vw, 20px); }
-    .game { font-size: clamp(14px, 3vw, 20px); }
-    .totals { flex-direction: row; justify-content: space-between; }
+  /* 極狭幅はスタッツ2列・履歴を縦積みに戻す */
+  @media (max-width: 470px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .histories { grid-template-columns: 1fr; }
   }
 
   /* 横長で背が低い画面はメイン側の文字を抑える */
@@ -269,23 +237,6 @@
 </style>
 </head>
 <body>
-<aside class="left">
-  <section class="panel totals">
-    <div>
-      <div class="label">通算1R平均</div>
-      <div class="total-value" id="totalAverage">--</div>
-    </div>
-    <div>
-      <div class="label">上がり</div>
-      <div class="total-value"><span id="winCount">0</span><small>/ <span id="gameCount">0</span> ゲーム</small></div>
-    </div>
-    <div>
-      <div class="label">ベスト1R平均</div>
-      <div class="total-value" id="bestAverage">--</div>
-    </div>
-  </section>
-</aside>
-
 <main>
   <section class="panel remaining" id="remainingBox">
     <div class="label">残り</div>
@@ -301,6 +252,18 @@
       <div class="label">ラウンド</div>
       <div class="stat-value"><span id="roundCount">0</span><small> / 10</small></div>
     </div>
+    <div class="panel stat is-total">
+      <div class="label">通算1R平均</div>
+      <div class="stat-value" id="totalAverage">--</div>
+    </div>
+    <div class="panel stat is-total">
+      <div class="label">上がり</div>
+      <div class="stat-value"><span id="winCount">0</span><small> / <span id="gameCount">0</span></small></div>
+    </div>
+    <div class="panel stat is-total">
+      <div class="label">ベスト1R平均</div>
+      <div class="stat-value" id="bestAverage">--</div>
+    </div>
   </section>
 
   <section>
@@ -309,26 +272,29 @@
     <div class="message" id="message"></div>
   </section>
 
-  <section class="panel history" id="history"></section>
+  <section class="histories">
+    <div class="panel">
+      <div class="label">ラウンド履歴</div>
+      <div class="list" id="history"></div>
+    </div>
+    <div class="panel">
+      <div class="label">ゲーム履歴（直近10）</div>
+      <div class="list" id="gameList"></div>
+    </div>
+  </section>
 
   <section class="actions">
     <button type="button" id="undo">1つ戻す</button>
     <button type="button" id="reset">リセット</button>
+    <button type="button" id="clearGames">履歴クリア</button>
   </section>
 </main>
-
-<aside class="right">
-  <section class="panel games">
-    <div class="label">ゲーム履歴（直近10）</div>
-    <div class="game-list" id="gameList"></div>
-  </section>
-  <button type="button" id="clearGames">履歴クリア</button>
-</aside>
 
 <script>
   const START = 501;
   const MAX_ROUNDS = 10;
   const MAX_GAMES = 10;
+  const DARTS_PER_ROUND = 3;
 
   // 3ダーツでダブルフィニッシュできない残り点
   const IMPOSSIBLE_CHECKOUT = new Set([169, 168, 166, 165, 163, 162, 159]);
@@ -339,9 +305,10 @@
 
   const state = {
     remaining: START,
-    rounds: [],   // { input, scored, remaining, bust }
-    games: [],    // { no, rounds, scored, remaining, avg, win } — 表示・集計は直近 MAX_GAMES 件
+    rounds: [],   // { input, scored, remaining, bust, darts } — darts は上がりラウンドのみ 1〜3
+    games: [],    // { no, rounds, darts, scored, remaining, avg, win } — 表示・集計は直近 MAX_GAMES 件
     result: null, // null | 'win' | 'over'
+    awaitingDarts: false, // 上がりラウンドの投数入力を待っている状態
     recorded: false, // 現在のゲームを games に記録済みか
     message: '',
     messageType: '',
@@ -365,8 +332,15 @@
     clearGames: document.getElementById('clearGames'),
   };
 
-  const average = () =>
-    state.rounds.length === 0 ? null : (START - state.remaining) / state.rounds.length;
+  // 投数の合計。上がりラウンド以外は3本、投数未入力のうちは暫定で3本として数える
+  const totalDarts = () =>
+    state.rounds.reduce((sum, r) => sum + (r.darts ?? DARTS_PER_ROUND), 0);
+
+  // 3ダーツアベレージ（削り点 ÷ 投数 × 3）。全ラウンド3本なら1ラウンド平均と一致する
+  const average = () => {
+    const darts = totalDarts();
+    return darts === 0 ? null : (START - state.remaining) / darts * DARTS_PER_ROUND;
+  };
 
   // 保存対象は直近 MAX_GAMES ゲームぶん
   const recentGames = () => state.games.slice(-MAX_GAMES);
@@ -377,21 +351,21 @@
   }
 
   function recordGame() {
-    const scored = START - state.remaining;
     const prev = state.games[state.games.length - 1];
     state.games.push({
       no: prev ? prev.no + 1 : 1,
       rounds: state.rounds.length,
-      scored,
+      darts: totalDarts(),
+      scored: START - state.remaining,
       remaining: state.remaining,
-      avg: scored / state.rounds.length,
+      avg: average(),
       win: state.result === 'win',
     });
     state.recorded = true;
   }
 
   function submitRound(score) {
-    if (state.result !== null) return;
+    if (state.result !== null || state.awaitingDarts) return;
 
     if (!Number.isInteger(score) || score < 0 || score > 180) {
       setMessage('0〜180 の範囲で入力してください', 'error');
@@ -409,26 +383,46 @@
     const bust = next < 0 || next === 1 || (next === 0 && !canCheckout(before));
 
     if (bust) {
-      state.rounds.push({ input: score, scored: 0, remaining: before, bust: true });
+      state.rounds.push({ input: score, scored: 0, remaining: before, bust: true, darts: DARTS_PER_ROUND });
       setMessage('BUST — 残り点はそのままです', 'bust');
     } else {
       state.remaining = next;
-      state.rounds.push({ input: score, scored: score, remaining: next, bust: false });
+      state.rounds.push({ input: score, scored: score, remaining: next, bust: false, darts: null });
       if (next === 0) {
-        state.result = 'win';
-        setMessage(`上がりです！ ${state.rounds.length}R / 1R平均 ${average().toFixed(1)} — Enter で次のゲームへ進みます`, 'win');
+        // 上がったラウンドは何投で終えたか分からないので、投数の入力を待つ
+        state.awaitingDarts = true;
+        setMessage('何投目で上がりましたか？（1〜3 を入力してください）', 'win');
       } else {
+        state.rounds[state.rounds.length - 1].darts = DARTS_PER_ROUND;
         setMessage('', '');
       }
     }
 
-    if (state.result === null && state.rounds.length >= MAX_ROUNDS) {
+    if (state.result === null && !state.awaitingDarts && state.rounds.length >= MAX_ROUNDS) {
       state.result = 'over';
       setMessage(`10R 終了です。残り ${state.remaining} / 1R平均 ${average().toFixed(1)} — Enter で次のゲームへ進みます`, 'error');
     }
 
     if (state.result !== null) recordGame();
 
+    render();
+  }
+
+  // 上がりラウンドの投数（1〜3）を確定してゲームを終える
+  function submitDarts(darts) {
+    if (!state.awaitingDarts) return;
+
+    if (!Number.isInteger(darts) || darts < 1 || darts > DARTS_PER_ROUND) {
+      setMessage('1〜3 のいずれかを入力してください', 'error');
+      render();
+      return;
+    }
+
+    state.rounds[state.rounds.length - 1].darts = darts;
+    state.awaitingDarts = false;
+    state.result = 'win';
+    setMessage(`上がりです！ ${totalDarts()}投 / 1R平均 ${average().toFixed(1)} — Enter で次のゲームへ進みます`, 'win');
+    recordGame();
     render();
   }
 
@@ -442,6 +436,7 @@
     const last = state.rounds[state.rounds.length - 1];
     state.remaining = last ? last.remaining : START;
     state.result = null;
+    state.awaitingDarts = false;
     setMessage('1つ戻しました', '');
     render();
   }
@@ -450,6 +445,7 @@
     state.remaining = START;
     state.rounds = [];
     state.result = null;
+    state.awaitingDarts = false;
     state.recorded = false;
     setMessage('', '');
     el.input.value = '';
@@ -471,9 +467,13 @@
       if (!r) {
         rows += `<div class="row is-empty"><span class="no">${i + 1}R</span><span class="score">-</span><span class="rest">-</span></div>`;
       } else {
+        let note = '';
+        if (r.bust) note = '<small>BUST</small>';
+        else if (r.darts === null) note = '<small>?投</small>';
+        else if (r.darts < DARTS_PER_ROUND) note = `<small>${r.darts}投</small>`;
         rows += `<div class="row${r.bust ? ' is-bust' : ''}">` +
           `<span class="no">${i + 1}R</span>` +
-          `<span class="score">${r.input}${r.bust ? '<small>BUST</small>' : ''}</span>` +
+          `<span class="score">${r.input}${note}</span>` +
           `<span class="rest">→ ${r.remaining}</span></div>`;
       }
     }
@@ -484,17 +484,19 @@
     const games = recentGames();
 
     let totalScored = 0;
-    let totalRounds = 0;
+    let totalGameDarts = 0;
     let wins = 0;
     let best = null;
     for (const g of games) {
       totalScored += g.scored;
-      totalRounds += g.rounds;
+      totalGameDarts += g.darts;
       if (g.win) wins++;
       if (best === null || g.avg > best) best = g.avg;
     }
 
-    el.totalAverage.textContent = totalRounds === 0 ? '--' : (totalScored / totalRounds).toFixed(1);
+    el.totalAverage.textContent = totalGameDarts === 0
+      ? '--'
+      : (totalScored / totalGameDarts * DARTS_PER_ROUND).toFixed(1);
     el.winCount.textContent = wins;
     el.gameCount.textContent = games.length;
     el.bestAverage.textContent = best === null ? '--' : best.toFixed(1);
@@ -508,7 +510,7 @@
         rows += `<div class="game${g.win ? ' is-win' : ''}">` +
           `<span class="gno">G${g.no}</span>` +
           `<span class="gavg">${g.avg.toFixed(1)}</span>` +
-          `<span class="gres">${g.win ? `${g.rounds}R` : `残${g.remaining}`}</span></div>`;
+          `<span class="gres">${g.win ? `${g.darts}投` : `残${g.remaining}`}</span></div>`;
       }
     }
     el.gameList.innerHTML = rows;
@@ -526,6 +528,7 @@
     el.message.className = 'message' + (state.messageType ? ` is-${state.messageType}` : '');
 
     el.input.disabled = state.result !== null;
+    el.input.className = state.awaitingDarts ? 'is-darts' : '';
 
     renderRounds();
     renderGames();
@@ -534,16 +537,19 @@
   }
 
   el.input.addEventListener('input', () => {
-    el.input.value = el.input.value.replace(/\D/g, '').slice(0, 3);
+    el.input.value = state.awaitingDarts
+      ? el.input.value.replace(/[^1-3]/g, '').slice(0, 1)
+      : el.input.value.replace(/\D/g, '').slice(0, 3);
   });
 
   el.input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (el.input.value === '') return;
-      const score = Number(el.input.value);
+      const value = Number(el.input.value);
       el.input.value = '';
-      submitRound(score);
+      if (state.awaitingDarts) submitDarts(value);
+      else submitRound(value);
     } else if (e.key === 'Escape') {
       el.input.value = '';
     }
